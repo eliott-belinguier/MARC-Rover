@@ -1,0 +1,3 @@
+[submodule "Core/MARC"]
+	path = Core/MARC
+	url = https://github.com/nicolas-flasque-efrei/MARC.git
