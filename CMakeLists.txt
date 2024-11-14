@@ -23,6 +23,7 @@ if (${TESTS})
 endif()
 
 add_subdirectory(Debug)
+add_subdirectory(List)
 add_subdirectory(Core)
 add_subdirectory(RoverRun)
 
