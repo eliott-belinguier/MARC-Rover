@@ -5,7 +5,7 @@
 #include "moves.h"
 
 typedef struct marc {
-  t_localisation loc;
+  localisation_s loc;
   unsigned int move_count[U_TURN + 1];
 } marc_s;
 

@@ -66,7 +66,7 @@ static int _coord_parse(const char *str, const char *coord_name, unsigned int co
 int main(int argc, char **argv)
 {
     marc_s marc = {0};
-    t_map map;
+    map_s map;
     int exit_result;
 
     DEBUG_PRINTF("%s\n", "Debug mode enabled.");
@@ -74,11 +74,11 @@ int main(int argc, char **argv)
         fprintf(stderr, USAGE_MESSAGE, argv[0]);
         return EINVAL;
     }
-    map = createMapFromFile(argv[1]);
-    exit_result = _coord_parse(argv[2], "x", map.x_max, (unsigned int *) &marc.loc.pos.x);
+    map = map_from_file(argv[1]);
+    exit_result = _coord_parse(argv[2], "x", map.width, (unsigned int *) &marc.loc.pos.x);
     if (exit_result)
         return exit_result;
-    exit_result = _coord_parse(argv[3], "y", map.x_max, (unsigned int *) &marc.loc.pos.y);
+    exit_result = _coord_parse(argv[3], "y", map.height, (unsigned int *) &marc.loc.pos.y);
     if (exit_result)
         return exit_result;
     return 0;
