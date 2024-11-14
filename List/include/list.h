@@ -12,6 +12,7 @@ typedef struct list {
     ssize_t (*add)(struct list *list, const generic_t *element);
     void (*clear)(struct list *list);
     void (*get)(struct list *list, size_t index, generic_t *out_element);
+    ssize_t (*insert)(struct list *list, size_t index, const generic_t *element);
     int (*remove)(struct list *list, const generic_t *element);
     void (*remove_index)(struct list *list, size_t index, generic_t *out_element);
     size_t element_size;
