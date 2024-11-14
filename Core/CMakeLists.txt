@@ -1,9 +1,9 @@
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/MARC/*.c")
 
-add_library(Base STATIC ${SOURCES})
+add_library(Core STATIC ${SOURCES})
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(Base PRIVATE -Wno-unused-result)
+    target_compile_options(Core PRIVATE -Wno-unused-result)
 ENDIF()
 
-target_include_directories(Base PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/MARC)
+target_include_directories(Core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/MARC)
