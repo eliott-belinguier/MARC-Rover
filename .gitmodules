@@ -1,3 +1,4 @@
 [submodule "Core/MARC"]
 	path = Core/MARC
-	url = https://github.com/nicolas-flasque-efrei/MARC.git
+	url = git@github.com:eliott-belinguier/MARC.git
+	branch = refactor-project-structure

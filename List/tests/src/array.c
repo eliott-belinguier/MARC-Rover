@@ -7,6 +7,8 @@
 #include "list.h"
 #include "tests/list.h"
 
+#ifdef COVERAGE
+
 extern void __gcov_flush(void);
 
 static void __signal_abrt_handler(int signum)
@@ -24,3 +26,5 @@ static void __setup_signal_handler()
 }
 
 TestSuite(list_array, .init = __setup_signal_handler);
+
+#endif

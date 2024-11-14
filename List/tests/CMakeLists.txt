@@ -12,6 +12,10 @@ add_custom_target(tests_run
         COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
 )
 
+if (TESTS)
+    target_compile_options(test_list PRIVATE -ggdb3)
+endif()
+
 if (COVERAGE)
     find_program(GCOVR_EXECUTABLE gcovr REQUIRED)
     if(NOT GCOVR_EXECUTABLE)

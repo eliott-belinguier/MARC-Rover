@@ -17,6 +17,7 @@ list_s *list_array_init(size_t element_size, int (*compare_func)(const generic_t
             .add = (ssize_t(*)(list_s *, const void *)) __list_array_func_add,
             .clear = (void (*)(list_s *)) __list_array_func_clear,
             .get = (void (*)(list_s *, size_t, generic_t *)) __list_array_func_get,
+            .insert = (ssize_t (*)(list_s *, size_t, const generic_t*)) __list_array_func_insert,
             .remove = (int (*)(list_s *, const generic_t *)) __list_array_func_remove,
             .remove_index = (void (*)(list_s *, size_t, generic_t *)) __list_array_func_remove_index,
             .element_size = element_size,

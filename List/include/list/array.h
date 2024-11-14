@@ -23,6 +23,7 @@ list_s *list_array_init(size_t element_size, int (*compare_func)(const generic_t
 ssize_t __list_array_func_add(list_array_s *list, const generic_t *element);
 void __list_array_func_clear(list_array_s *list);
 void __list_array_func_get(list_array_s *list, size_t index, generic_t *out_element);
+ssize_t __list_array_func_insert(list_array_s *list, size_t index, const generic_t *element);
 int __list_array_func_remove(list_array_s *list, const generic_t *element);
 void __list_array_func_remove_index(list_array_s *list, size_t index, generic_t *out_element);
 
