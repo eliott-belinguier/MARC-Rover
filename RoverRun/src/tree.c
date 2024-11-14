@@ -76,7 +76,7 @@ tree_s tree_from_map(map_s map, position_s start) {
     parent = tree_node_empty();
     parent->move = -1;
     parent->costs = map.costs[start.y][start.x];
-    parent->alive = POSITION_IS_VALID(start, map.width, map.height) && map.soils[start][start.y] != CREVASSE;
+    parent->alive = POSITION_IS_VALID(start, map.width, map.height) && map.soils[start.y][start.x] != CREVASSE;
     tree.root = parent;
     if (parent->alive == 0)
         return tree;
