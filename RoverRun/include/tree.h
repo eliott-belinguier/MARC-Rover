@@ -21,7 +21,7 @@ tree_s tree_empty();
 tree_node_s *tree_node_empty();
 void node_add_node(tree_node_s *parent, tree_node_s *child);
 tree_node_s *node_add_cell_node(tree_node_s *parent, map_s map, t_move move, localisation_s localisation);
-tree_s tree_from_map(map_s map, position_s start);
+tree_s tree_from_map(map_s map, localisation_s start);
 
 
 #endif

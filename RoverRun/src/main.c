@@ -65,6 +65,7 @@ static int _coord_parse(const char *str, const char *coord_name, unsigned int co
 
 int main(int argc, char **argv)
 {
+    localisation_s loc_start = {0};
     marc_s marc = {0};
     map_s map;
     int exit_result;
@@ -75,11 +76,14 @@ int main(int argc, char **argv)
         return EINVAL;
     }
     map = map_from_file(argv[1]);
-    exit_result = _coord_parse(argv[2], "x", map.width, (unsigned int *) &marc.loc.pos.x);
+    exit_result = _coord_parse(argv[2], "x", map.width, (unsigned int *) &loc_start.pos.x);
     if (exit_result)
         return exit_result;
-    exit_result = _coord_parse(argv[3], "y", map.height, (unsigned int *) &marc.loc.pos.y);
+    exit_result = _coord_parse(argv[3], "y", map.height, (unsigned int *) &loc_start.pos.y);
     if (exit_result)
         return exit_result;
+    marc.all_states = tree_from_map(map, loc_start);
+    marc.current_state = marc.all_states.root;
+
     return 0;
 }
