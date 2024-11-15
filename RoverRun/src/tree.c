@@ -12,12 +12,6 @@ static int _fake_node_cmp(tree_node_s **node1, tree_node_s **node2)
     return 0;
 }
 
-static int _fake_move_cmp(t_move *move1, t_move *move2)
-{
-    return 0;
-}
-
-
 tree_s tree_empty()
 {
   tree_s tree;
@@ -101,9 +95,10 @@ tree_s tree_from_map(map_s map, localisation_s start) {
         for (t_move move_inst = F_10; move_inst <= U_TURN; ++move_inst) {
             compute_loc = move(parent->loc, move_inst);
             compute_node = node_add_cell_node(parent, map, move_inst, compute_loc);
-            if (compute_node)
+            if (compute_node && compute_node->alive)
                 LIST_CALL(node_queue, add, &compute_node);
         }
     }
+    free(node_queue);
     return tree;
 }
