@@ -7,9 +7,53 @@
 #include <queue.h>
 #include <string.h>
 
+#define LOC_SOIL(map, loc) (map).soils[(loc).pos.y][(loc).pos.x]
+#define RAND(min, max) ((min) + rand() % ((max) - (min) + 1))
+#define SWITCH_VALUE(type, val1, val2)      \
+    {                                       \
+        type tmp;                           \
+                                            \
+        tmp = val1;                         \
+        val1 = val2;                        \
+        val2 = tmp;                         \
+    }
+
 static int _fake_node_cmp(tree_node_s **node1, tree_node_s **node2)
 {
     return 0;
+}
+
+static void _random_move(t_move move_inst[U_TURN + 1])
+{
+    t_move *random_move;
+
+    for (t_move i = F_10; i <= U_TURN; ++i)
+        move_inst[i] = i;
+    for (size_t i = 0; i <= U_TURN; ++i) {
+        random_move = &move_inst[RAND(0, U_TURN - i)];
+        SWITCH_VALUE(t_move, move_inst[U_TURN - i - 1], *random_move);
+    }
+}
+
+static localisation_s _compute_move_by_soil(map_s map, localisation_s loc, t_move move_inst)
+{
+    if (LOC_SOIL(map, loc) != ERG)
+        return move(loc, move_inst);
+    switch (move_inst) {
+        case F_10:
+        case B_10:
+        case T_LEFT:
+        case T_RIGHT:
+            return loc;
+            break;
+        case F_20:
+            return move(loc, F_10);
+        case F_30:
+            return move(loc, F_20);
+        case U_TURN:
+            return move(loc, RAND(0, 1) ? T_LEFT : T_RIGHT);
+    }
+    return loc;
 }
 
 tree_s tree_empty()
@@ -74,10 +118,14 @@ tree_node_s *node_add_cell_node(tree_node_s *parent, map_s map, t_move move, loc
     return node;
 }
 
+
+
 tree_s tree_from_map(map_s map, localisation_s start) {
+    t_move move_inst[U_TURN + 1];
     tree_s tree = tree_empty();
     tree_node_s *parent;
     list_s *node_queue = LIST_LINKED_INIT(sizeof(tree_node_s *), _fake_node_cmp);
+    size_t move_limit;
 
     localisation_s compute_loc;
     tree_node_s *compute_node;
@@ -92,9 +140,11 @@ tree_s tree_from_map(map_s map, localisation_s start) {
     LIST_CALL(node_queue, add, &parent);
     while (node_queue->size) {
         LIST_CALL(node_queue, remove_index, 0, &parent);
-        for (t_move move_inst = F_10; move_inst <= U_TURN; ++move_inst) {
-            compute_loc = move(parent->loc, move_inst);
-            compute_node = node_add_cell_node(parent, map, move_inst, compute_loc);
+        _random_move(move_inst);
+        move_limit = LOC_SOIL(map, parent->loc) == REG ? 4 : U_TURN + 1;
+        for (size_t i = 0; i < move_limit; ++i) {
+            compute_loc = _compute_move_by_soil(map, parent->loc, move_inst[i]);
+            compute_node = node_add_cell_node(parent, map, move_inst[i], compute_loc);
             if (compute_node && compute_node->alive)
                 LIST_CALL(node_queue, add, &compute_node);
         }

@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "debug.h"
 #include "map.h"
@@ -75,6 +76,7 @@ int main(int argc, char **argv)
         fprintf(stderr, USAGE_MESSAGE, argv[0]);
         return EINVAL;
     }
+    srand(time(NULL));
     map = map_from_file(argv[1]);
     exit_result = _coord_parse(argv[2], "x", map.width, (unsigned int *) &loc_start.pos.x);
     if (exit_result)
