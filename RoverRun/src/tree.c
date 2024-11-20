@@ -72,7 +72,7 @@ tree_node_s *tree_node_empty()
     if (node == NULL)
       return NULL;
     node->move = 0;
-    node->loc = {0};
+    node->loc = (localisation_s) {0};
     node->costs = 0;
     node->alive = 1;
     node->childs = LIST_ARRAY_INIT(sizeof(tree_node_s *), _fake_node_cmp);
