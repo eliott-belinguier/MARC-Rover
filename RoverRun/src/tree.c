@@ -3,7 +3,6 @@
 
 #include "map.h"
 #include "moves.h"
-#include "queue.h"
 #include "tree.h"
 
 #define LOC_SOIL(map, loc) (map).soils[(loc).pos.y][(loc).pos.x]
@@ -140,7 +139,7 @@ tree_s tree_from_map(map_s map, localisation_s start) {
     t_move move_inst[U_TURN + 1];
     tree_s tree = tree_empty();
     tree_node_s *parent;
-    list_s *node_queue = LIST_LINKED_INIT(sizeof(tree_node_s *), _fake_node_cmp);
+    list_s *node_stack = LIST_LINKED_INIT(sizeof(tree_node_s *), _fake_node_cmp);
     size_t move_limit;
 
     localisation_s compute_loc;
@@ -153,24 +152,19 @@ tree_s tree_from_map(map_s map, localisation_s start) {
     tree.root = parent;
     if (parent->alive == 0)
         return tree;
-    LIST_CALL(node_queue, add, &parent);
-    while (node_queue->size) {
-        LIST_CALL(node_queue, remove_index, 0, &parent);
+    LIST_CALL(node_stack, add, &parent);
+    while (node_stack->size) {
+        LIST_CALL(node_stack, remove_index, 0, &parent);
         _random_move(move_inst);
         move_limit = LOC_SOIL(map, parent->loc) == REG ? 4 : U_TURN + 1;
         for (size_t i = 0; i < move_limit; ++i) {
             compute_loc = _compute_move_by_soil(map, parent->loc, move_inst[i]);
             compute_node = node_add_cell_node(parent, map, move_inst[i], compute_loc);
             if (compute_node && compute_node->alive && !parent->visited[compute_loc.pos.y * map.width + compute_loc.pos.x])
-                LIST_CALL(node_queue, add, &compute_node);
-            else if (compute_node) {
-                free(compute_node->childs);
-                free(compute_node->visited);
-                free(compute_node);
-            }
+                LIST_CALL(node_stack, add, &compute_node);
         }
     }
-    free(node_queue);
+    free(node_stack);
     return tree;
 }
 

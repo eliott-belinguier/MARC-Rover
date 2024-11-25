@@ -86,6 +86,6 @@ int main(int argc, char **argv)
         return exit_result;
     marc.all_states = tree_from_map(map, loc_start);
     marc.current_state = marc.all_states.root;
-
+    tree_free(marc.all_states);
     return 0;
 }
