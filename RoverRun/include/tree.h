@@ -23,6 +23,6 @@ tree_node_s *tree_node_empty(map_s map);
 void node_add_node(map_s map, tree_node_s *parent, tree_node_s *child);
 tree_node_s *node_add_cell_node(tree_node_s *parent, map_s map, t_move move, localisation_s localisation);
 tree_s tree_from_map(map_s map, localisation_s start);
-
+void tree_free(tree_s tree);
 
 #endif

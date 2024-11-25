@@ -173,3 +173,28 @@ tree_s tree_from_map(map_s map, localisation_s start) {
     free(node_queue);
     return tree;
 }
+
+void tree_free(tree_s tree)
+{
+    list_s *list = LIST_LINKED_INIT(sizeof(tree_node_s *), _fake_node_cmp);
+    tree_node_s *current;
+    list_s *current_childs;
+    size_t current_childs_count;
+    tree_node_s *child;
+
+    if (!list)
+        return;
+    LIST_CALL(list, add, &tree.root);
+    while (list->size) {
+        LIST_CALL(list, remove_index, 0, &current);
+        current_childs = current->childs;
+        current_childs_count = current_childs->size;
+        for (size_t i = 0; i < current_childs_count; ++i) {
+            LIST_CALL(current_childs, remove_index, 0, &child);
+            LIST_CALL(list, add, &child);
+        }
+        free(current->childs);
+        free(current->visited);
+        free(current);
+    }
+}
