@@ -9,6 +9,7 @@ typedef struct tree_node {
   localisation_s loc;
   unsigned int costs;
   int alive;
+  struct tree_node *parent;
   list_s *childs;
   unsigned int move_count[U_TURN + 1];
   uint8_t *visited;

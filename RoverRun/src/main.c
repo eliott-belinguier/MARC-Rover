@@ -6,6 +6,8 @@
 #include "debug.h"
 #include "map.h"
 #include "marc.h"
+#include "moves.h"
+#include "simulation.h"
 
 #define USAGE_MESSAGE                                       \
     "Error: Invalid arguments.\n"                           \
@@ -63,12 +65,27 @@ static int _coord_parse(const char *str, const char *coord_name, unsigned int co
     return 0;
 }
 
+static void _display_path(list_s *path) {
+    static char *orientation[WEST + 1] = {"NORTH", "EAST", "SOUTH", "WEST"};
+    size_t path_size = path->size;
+    tree_node_s *node;
+
+    printf("PATH:\n");
+    for (size_t i = 0; i < path_size; ++i) {
+        LIST_CALL(path, get, path_size - i - 1, &node);
+        if (!node->alive) {
+            printf("\tMARC DEATH\n");
+            return;
+        }
+        printf("\t%s (ori: %s)  (pos: %u, %u)\n", node->move < U_TURN ? getMoveAsString(node->move) : "NO MOVE", orientation[node->loc.ori], node->loc.pos.x, node->loc.pos.y);
+    }
+}
 
 int main(int argc, char **argv)
 {
     localisation_s loc_start = {0};
     marc_s marc = {0};
-    map_s map;
+    list_s *path;
     int exit_result;
 
     DEBUG_PRINTF("%s\n", "Debug mode enabled.");
@@ -77,15 +94,21 @@ int main(int argc, char **argv)
         return EINVAL;
     }
     srand(time(NULL));
-    map = map_from_file(argv[1]);
-    exit_result = _coord_parse(argv[2], "x", map.width, (unsigned int *) &loc_start.pos.x);
+    marc.map = map_from_file(argv[1]);
+    exit_result = _coord_parse(argv[2], "x", marc.map.width, (unsigned int *) &loc_start.pos.x);
     if (exit_result)
         return exit_result;
-    exit_result = _coord_parse(argv[3], "y", map.height, (unsigned int *) &loc_start.pos.y);
+    exit_result = _coord_parse(argv[3], "y", marc.map.height, (unsigned int *) &loc_start.pos.y);
     if (exit_result)
         return exit_result;
-    marc.all_states = tree_from_map(map, loc_start);
-    marc.current_state = marc.all_states.root;
+    marc.all_states = tree_from_map(marc.map, loc_start);
+    map_display(marc.map);
+    path = find_path(marc);
+    if (path) {
+        _display_path(path);
+        LIST_CALL(path, clear);
+    } else
+        printf(RED "Any path found." RESET "\n");
     tree_free(marc.all_states);
     return 0;
 }

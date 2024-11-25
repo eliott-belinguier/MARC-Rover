@@ -5,6 +5,8 @@
 #include "moves.h"
 #include "tree.h"
 
+#include <debug.h>
+
 #define LOC_SOIL(map, loc) (map).soils[(loc).pos.y][(loc).pos.x]
 #define RAND(min, max) ((min) + rand() % ((max) - (min) + 1))
 #define SWITCH_VALUE(type, val1, val2)      \
@@ -29,7 +31,7 @@ static void _random_move(t_move move_inst[U_TURN + 1])
         move_inst[i] = i;
     for (size_t i = 0; i <= U_TURN; ++i) {
         random_move = &move_inst[RAND(0, U_TURN - i)];
-        SWITCH_VALUE(t_move, move_inst[U_TURN - i - 1], *random_move);
+        SWITCH_VALUE(t_move, move_inst[U_TURN - i], *random_move);
     }
 }
 
@@ -74,6 +76,7 @@ tree_node_s *tree_node_empty(map_s map)
     node->loc = (localisation_s) {0};
     node->costs = 0;
     node->alive = 1;
+    node->parent = 0;
     node->childs = LIST_ARRAY_INIT(sizeof(tree_node_s *), _fake_node_cmp);
     memcpy(node->move_count, available_moves, sizeof(available_moves));
     map_size = map.width * map.height;
@@ -95,6 +98,7 @@ void node_add_node(map_s map, tree_node_s *parent, tree_node_s *child)
     tree_node_s *current;
     size_t i = 0;
 
+    child->parent = parent;
     memcpy(child->move_count, parent->move_count, sizeof(unsigned int) * (U_TURN + 1));
     child->move_count[child->move] -= 1;
     if (parent->childs->size == 0) {
