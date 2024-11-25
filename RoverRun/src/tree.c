@@ -89,7 +89,7 @@ void node_add_node(tree_node_s *parent, tree_node_s *child)
     tree_node_s *current;
     size_t i = 0;
 
-    memcpy(child->move_count, parent->move_count, sizeof(child->move));
+    memcpy(child->move_count, parent->move_count, sizeof(unsigned int) * (U_TURN + 1));
     child->move_count[child->move] -= 1;
     if (parent->childs->size == 0) {
         LIST_CALL(parent->childs, add, &child);
@@ -112,8 +112,13 @@ tree_node_s *node_add_cell_node(tree_node_s *parent, map_s map, t_move move, loc
     node = tree_node_empty();
     node->move = move;
     node->loc = localisation;
-    node->costs = map.costs[localisation.pos.y][localisation.pos.x];
-    node->alive = POSITION_IS_VALID(localisation.pos, map.width, map.height) && map.soils[localisation.pos.y][localisation.pos.y] != CREVASSE;
+    if (POSITION_IS_VALID(localisation.pos, map.width, map.height)) {
+        node->costs = map.costs[localisation.pos.y][localisation.pos.x];
+        node->alive = map.soils[localisation.pos.y][localisation.pos.x] != CREVASSE;
+    } else {
+        node->costs = COST_UNDEF;
+        node->alive = 0;
+    }
     node_add_node(parent, node);
     return node;
 }
